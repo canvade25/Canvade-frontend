@@ -1,0 +1,17 @@
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "https://canvade-backend.onrender.com",
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token") || localStorage.getItem("Token");
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+export default api;

@@ -1,0 +1,20 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./index.css";
+import { Toaster } from "react-hot-toast";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <>
+    <App />
+
+    <Toaster
+      position="top-right"
+      reverseOrder={false}
+      gutter={10}
+      toastOptions={{
+        duration: 3000,
+      }}
+    />
+  </>
+);
