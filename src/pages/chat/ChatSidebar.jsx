@@ -1,7 +1,8 @@
 // src/components/chat/ChatSidebar.jsx
-import React, { useState } from "react";
-import { UserPlus, Users } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { UserPlus, Users, X } from "lucide-react";
 import { SIDEBAR_SECTIONS } from "../../utils/constants";
+import { searchStudentByStudentId } from "../../../api/userApi";
 
 const INSTITUTE_ROLES = ["institute", "admin", "educator"];
 
@@ -28,10 +29,48 @@ const ChatSidebar = ({
 
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
+  const [memberSearchInput, setMemberSearchInput] = useState("");
+  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [memberSearchResults, setMemberSearchResults] = useState([]);
+  const [memberSearchLoading, setMemberSearchLoading] = useState(false);
   const [creatingGroup, setCreatingGroup] = useState(false);
   const [groupFeedback, setGroupFeedback] = useState(null);
 
   const isInstitute = INSTITUTE_ROLES.includes(String(userRole).toLowerCase());
+
+  useEffect(() => {
+    const query = memberSearchInput.trim();
+    if (!query) {
+      setMemberSearchResults([]);
+      setMemberSearchLoading(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    setMemberSearchLoading(true);
+    const timer = setTimeout(() => {
+      searchStudentByStudentId(query)
+        .then((res) => {
+          if (!cancelled) {
+            const results = (res?.data || []).filter(
+              (student) => !selectedMembers.includes(student.uid),
+            );
+            setMemberSearchResults(results);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) setMemberSearchResults([]);
+        })
+        .finally(() => {
+          if (!cancelled) setMemberSearchLoading(false);
+        });
+    }, 250);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [memberSearchInput, selectedMembers]);
 
   const handleToggleAddStudent = (event) => {
     event.stopPropagation();
@@ -73,10 +112,12 @@ const ChatSidebar = ({
     setCreatingGroup(true);
     setGroupFeedback(null);
     try {
-      await onCreateGroup(name, groupDescription.trim());
+      await onCreateGroup(name, groupDescription.trim(), selectedMembers);
       setGroupFeedback({ type: "success", text: "Group created." });
       setGroupName("");
       setGroupDescription("");
+      setMemberSearchInput("");
+      setSelectedMembers([]);
     } catch (error) {
       const message =
         error?.response?.data?.message || error?.message || "Failed to create group.";
@@ -84,6 +125,19 @@ const ChatSidebar = ({
     } finally {
       setCreatingGroup(false);
     }
+  };
+
+  const handleSelectMember = (memberUid) => {
+    setSelectedMembers((prev) => {
+      if (prev.includes(memberUid)) return prev;
+      return [...prev, memberUid];
+    });
+    setMemberSearchInput("");
+    setMemberSearchResults([]);
+  };
+
+  const handleRemoveMember = (memberUid) => {
+    setSelectedMembers((prev) => prev.filter((uid) => uid !== memberUid));
   };
 
   return (
@@ -109,8 +163,7 @@ const ChatSidebar = ({
       })}
 
       <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
-        {isInstitute && (
-          <div style={{ position: "relative" }}>
+        <div style={{ position: "relative" }}>
             <button
               type="button"
               onClick={handleToggleCreateGroup}
@@ -196,6 +249,130 @@ const ChatSidebar = ({
                       resize: "vertical",
                     }}
                   />
+
+                  <div style={{ marginBottom: 8 }}>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: "#374151",
+                        marginBottom: 6,
+                      }}
+                    >
+                      Members (optional)
+                    </div>
+                    <input
+                      type="text"
+                      value={memberSearchInput}
+                      onChange={(event) => setMemberSearchInput(event.target.value)}
+                      placeholder="Search student by Student UID"
+                      style={{
+                        width: "100%",
+                        border: "1px solid #E5E7EB",
+                        borderRadius: 8,
+                        padding: "8px 10px",
+                        fontSize: 12,
+                        outline: "none",
+                        boxSizing: "border-box",
+                        marginBottom: 6,
+                      }}
+                    />
+
+                    {selectedMembers.length > 0 && (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: 6,
+                          marginBottom: 8,
+                        }}
+                      >
+                        {selectedMembers.map((uid) => (
+                          <div
+                            key={uid}
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 4,
+                              borderRadius: 999,
+                              background: "#EFF6FF",
+                              color: "#1D4ED8",
+                              fontSize: 10,
+                              fontWeight: 700,
+                              padding: "4px 8px",
+                            }}
+                          >
+                            {uid}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveMember(uid)}
+                              style={{
+                                border: "none",
+                                background: "transparent",
+                                color: "#1D4ED8",
+                                cursor: "pointer",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: 0,
+                              }}
+                              aria-label={`Remove ${uid}`}
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {memberSearchLoading && (
+                      <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 6 }}>
+                        Searching students...
+                      </div>
+                    )}
+
+                    {!memberSearchLoading && memberSearchResults.length > 0 && (
+                      <div
+                        style={{
+                          border: "1px solid #E5E7EB",
+                          borderRadius: 8,
+                          background: "#F9FAFB",
+                          maxHeight: 120,
+                          overflowY: "auto",
+                          padding: 6,
+                        }}
+                      >
+                        {memberSearchResults.map((student) => (
+                          <button
+                            key={student.uid}
+                            type="button"
+                            onClick={() => handleSelectMember(student.uid)}
+                            style={{
+                              width: "100%",
+                              textAlign: "left",
+                              border: "none",
+                              background: "transparent",
+                              padding: "6px 8px",
+                              borderRadius: 6,
+                              fontSize: 11,
+                              fontWeight: 600,
+                              color: "#1F2937",
+                              cursor: "pointer",
+                            }}
+                          >
+                            {student.displayName || student.studentId} · {student.studentId}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {!memberSearchLoading && memberSearchInput && memberSearchResults.length === 0 && (
+                      <div style={{ fontSize: 11, color: "#6B7280", marginTop: 6 }}>
+                        No student found.
+                      </div>
+                    )}
+                  </div>
+
                   {groupFeedback && (
                     <div
                       style={{
@@ -230,7 +407,6 @@ const ChatSidebar = ({
               </div>
             )}
           </div>
-        )}
 
         <div style={{ position: "relative" }}>
           <button

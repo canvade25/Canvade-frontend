@@ -39,6 +39,7 @@ import {
   getGroupById,
   getGlobalGroups,
   createGroup,
+  addMembersToGroup,
   sendGroupMessage,
   editGroupMessage,
   deleteGroupMessage,
@@ -767,8 +768,56 @@ const ChatPage = () => {
     }
   };
 
+  const [addMembersToGroupOpen, setAddMembersToGroupOpen] = useState(false);
+  const [addMembersGroupSearch, setAddMembersGroupSearch] = useState("");
+  const [addMembersGroupResults, setAddMembersGroupResults] = useState([]);
+  const [addMembersGroupSearchLoading, setAddMembersGroupSearchLoading] = useState(false);
+  const [selectedAddMembers, setSelectedAddMembers] = useState([]);
+  const [addMembersGroupFeedback, setAddMembersGroupFeedback] = useState(null);
+  const [addingMembersToGroup, setAddingMembersToGroup] = useState(false);
+
+  useEffect(() => {
+    const query = addMembersGroupSearch.trim();
+    if (!query) {
+      setAddMembersGroupResults([]);
+      setAddMembersGroupSearchLoading(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    setAddMembersGroupSearchLoading(true);
+    const timer = setTimeout(() => {
+      searchStudentByStudentId(query)
+        .then((res) => {
+          if (!cancelled) {
+            const results = (res?.data || []).filter(
+              (student) => !selectedAddMembers.includes(student.uid),
+            );
+            setAddMembersGroupResults(results);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) setAddMembersGroupResults([]);
+        })
+        .finally(() => {
+          if (!cancelled) setAddMembersGroupSearchLoading(false);
+        });
+    }, 250);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [addMembersGroupSearch, selectedAddMembers]);
+
   const handleSelectHeaderOption = (option) => {
     setHeaderMenuOpen(false);
+
+    if (option === "Add Members") {
+      setAddMembersToGroupOpen(true);
+      setAddMembersGroupFeedback(null);
+      return;
+    }
 
     const conversationId = selectedChat?.conversationId;
 
@@ -897,8 +946,42 @@ const ChatPage = () => {
     setCreateGroupOpen((v) => !v);
   };
 
-  const handleCreateGroup = async (groupName, description) => {
-    const res = await createGroup({ groupName, description });
+  const handleSelectAddMember = (memberUid) => {
+    setSelectedAddMembers((prev) => {
+      if (prev.includes(memberUid)) return prev;
+      return [...prev, memberUid];
+    });
+    setAddMembersGroupSearch("");
+    setAddMembersGroupResults([]);
+  };
+
+  const handleRemoveAddMember = (memberUid) => {
+    setSelectedAddMembers((prev) => prev.filter((uid) => uid !== memberUid));
+  };
+
+  const handleAddMembersToGroup = async () => {
+    if (!selectedAddMembers.length || !selectedChat?.groupId) return;
+
+    setAddingMembersToGroup(true);
+    setAddMembersGroupFeedback(null);
+    try {
+      await addMembersToGroup(selectedChat.groupId, selectedAddMembers);
+      setAddMembersGroupFeedback({ type: "success", text: "Members added successfully." });
+      setSelectedAddMembers([]);
+      setAddMembersGroupSearch("");
+      await loadGroups();
+      setTimeout(() => setAddMembersToGroupOpen(false), 1500);
+    } catch (error) {
+      const message =
+        error?.response?.data?.message || error?.message || "Failed to add members.";
+      setAddMembersGroupFeedback({ type: "error", text: message });
+    } finally {
+      setAddingMembersToGroup(false);
+    }
+  };
+
+  const handleCreateGroup = async (groupName, description, memberUids = []) => {
+    const res = await createGroup({ groupName, description, memberUids });
     await loadGroups();
     setActiveSidebar("Joined");
     setActiveTab("Groups");
@@ -1060,6 +1143,214 @@ const ChatPage = () => {
               <div className="chat-area">
                 {selectedChat ? (
                   <>
+                    {addMembersToGroupOpen && selectedChat?.isGroup && (
+                      <div
+                        style={{
+                          position: "fixed",
+                          inset: 0,
+                          background: "rgba(0, 0, 0, 0.5)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          zIndex: 1000,
+                        }}
+                        onClick={() => setAddMembersToGroupOpen(false)}
+                      >
+                        <div
+                          style={{
+                            background: "#fff",
+                            borderRadius: 16,
+                            padding: 20,
+                            width: "90%",
+                            maxWidth: 400,
+                            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div
+                            style={{
+                              fontSize: 14,
+                              fontWeight: 700,
+                              color: "#1F2937",
+                              marginBottom: 16,
+                            }}
+                          >
+                            Add Members to {selectedChat.name}
+                          </div>
+
+                          <input
+                            type="text"
+                            value={addMembersGroupSearch}
+                            onChange={(e) => setAddMembersGroupSearch(e.target.value)}
+                            placeholder="Search student by Student UID"
+                            autoFocus
+                            style={{
+                              width: "100%",
+                              border: "1px solid #E5E7EB",
+                              borderRadius: 8,
+                              padding: "8px 10px",
+                              fontSize: 12,
+                              outline: "none",
+                              boxSizing: "border-box",
+                              marginBottom: 12,
+                            }}
+                          />
+
+                          {selectedAddMembers.length > 0 && (
+                            <div
+                              style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: 6,
+                                marginBottom: 12,
+                              }}
+                            >
+                              {selectedAddMembers.map((uid) => (
+                                <div
+                                  key={uid}
+                                  style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: 4,
+                                    borderRadius: 999,
+                                    background: "#EFF6FF",
+                                    color: "#1D4ED8",
+                                    fontSize: 10,
+                                    fontWeight: 700,
+                                    padding: "4px 8px",
+                                  }}
+                                >
+                                  {uid}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveAddMember(uid)}
+                                    style={{
+                                      border: "none",
+                                      background: "transparent",
+                                      color: "#1D4ED8",
+                                      cursor: "pointer",
+                                      fontSize: 14,
+                                      padding: 0,
+                                    }}
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {addMembersGroupSearchLoading && (
+                            <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 12 }}>
+                              Searching students...
+                            </div>
+                          )}
+
+                          {!addMembersGroupSearchLoading && addMembersGroupResults.length > 0 && (
+                            <div
+                              style={{
+                                border: "1px solid #E5E7EB",
+                                borderRadius: 8,
+                                background: "#F9FAFB",
+                                maxHeight: 150,
+                                overflowY: "auto",
+                                padding: 8,
+                                marginBottom: 12,
+                              }}
+                            >
+                              {addMembersGroupResults.map((student) => (
+                                <button
+                                  key={student.uid}
+                                  type="button"
+                                  onClick={() => handleSelectAddMember(student.uid)}
+                                  style={{
+                                    width: "100%",
+                                    textAlign: "left",
+                                    border: "none",
+                                    background: "transparent",
+                                    padding: "6px 8px",
+                                    borderRadius: 6,
+                                    fontSize: 11,
+                                    fontWeight: 600,
+                                    color: "#1F2937",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  {student.displayName || student.studentId} · {student.studentId}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+
+                          {!addMembersGroupSearchLoading &&
+                            addMembersGroupSearch &&
+                            addMembersGroupResults.length === 0 && (
+                              <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 12 }}>
+                                No student found.
+                              </div>
+                            )}
+
+                          {addMembersGroupFeedback && (
+                            <div
+                              style={{
+                                fontSize: 11,
+                                fontWeight: 600,
+                                marginBottom: 12,
+                                color:
+                                  addMembersGroupFeedback.type === "error" ? "#DC2626" : "#059669",
+                              }}
+                            >
+                              {addMembersGroupFeedback.text}
+                            </div>
+                          )}
+
+                          <div style={{ display: "flex", gap: 8 }}>
+                            <button
+                              type="button"
+                              onClick={() => setAddMembersToGroupOpen(false)}
+                              style={{
+                                flex: 1,
+                                border: "1px solid #E5E7EB",
+                                borderRadius: 8,
+                                padding: "8px 10px",
+                                fontSize: 12,
+                                fontWeight: 700,
+                                color: "#6B7280",
+                                background: "#fff",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleAddMembersToGroup}
+                              disabled={!selectedAddMembers.length || addingMembersToGroup}
+                              style={{
+                                flex: 1,
+                                border: "none",
+                                borderRadius: 8,
+                                padding: "8px 10px",
+                                fontSize: 12,
+                                fontWeight: 700,
+                                color: "#fff",
+                                background:
+                                  !selectedAddMembers.length || addingMembersToGroup
+                                    ? "#93C5FD"
+                                    : "#1D4ED8",
+                                cursor:
+                                  !selectedAddMembers.length || addingMembersToGroup
+                                    ? "not-allowed"
+                                    : "pointer",
+                              }}
+                            >
+                              {addingMembersToGroup ? "Adding..." : "Add Members"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     <ChatHeader
                       chat={selectedChat}
                       isDesktop={isDesktop}

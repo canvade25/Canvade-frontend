@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Bell, ShoppingCart, Search, Menu, X, ChevronDown, Heart, User } from "lucide-react";
 import { getCartItems } from "../../api/cartApi";
-import { getProfile } from "../../api/userApi";
+import { getProfile, getInstId } from "../../api/userApi";
 const LOGO_SRC = "/canvade1.png";
 
 const getStoredUser = () => {
@@ -23,6 +23,7 @@ export default function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [studentId, setStudentId] = useState(null);
+  const [instituteId, setInstituteId] = useState(null);
   const [profileName, setProfileName] = useState(() => getStoredUser()?.displayName || "");
   const [profileImage, setProfileImage] = useState(() => getStoredUser()?.profileImage || "");
   const dropdownRef = useRef(null);
@@ -147,10 +148,11 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch account details (name, photo, student ID) for the profile popup
+  // Fetch account details (name, photo, student/institute ID) for the profile popup
   useEffect(() => {
     if (!isLoggedIn) {
       setStudentId(null);
+      setInstituteId(null);
       setProfileName("");
       setProfileImage("");
       return;
@@ -166,6 +168,15 @@ export default function Navbar() {
         setStudentId(data.studentId || null);
       })
       .catch((error) => console.error("Fetch profile error:", error));
+
+    if (isInstituteRole) {
+      getInstId()
+        .then((res) => {
+          if (!mounted || !res?.success) return;
+          setInstituteId(res.instituteId || null);
+        })
+        .catch((error) => console.error("Fetch institute ID error:", error));
+    }
 
     return () => {
       mounted = false;
@@ -347,7 +358,9 @@ export default function Navbar() {
                             {profileName || (isInstituteRole ? "Institute Account" : "Student Account")}
                           </p>
                           <p className="truncate text-[12px] font-sans text-gray-400">
-                            {studentId || (isInstituteRole ? "Institute" : " ")}
+                            {isInstituteRole
+                              ? (instituteId || "Institute")
+                              : (studentId || " ")}
                           </p>
                         </div>
                       </div>

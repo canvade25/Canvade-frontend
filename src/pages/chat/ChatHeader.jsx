@@ -1,5 +1,5 @@
 // src/components/chat/ChatHeader.jsx
-import React from "react";
+import React, { useMemo } from "react";
 import { BackIcon, MoreVerticalIcon } from "./icons";
 import HeaderMenu from "./HeaderMenu";
 import { getProfileOptions } from "../../utils/constants";
@@ -13,7 +13,14 @@ const ChatHeader = ({
   onToggleMenu,
   onOptionSelect,
 }) => {
-  const profileOptions = getProfileOptions(activeTab);
+  const profileOptions = useMemo(() => {
+    const baseOptions = getProfileOptions(activeTab);
+    if (chat?.isGroup) {
+      const addMembersOption = "Add Members";
+      return [addMembersOption, ...baseOptions];
+    }
+    return baseOptions;
+  }, [activeTab, chat?.isGroup]);
 
   return (
     <div className="chat-header">

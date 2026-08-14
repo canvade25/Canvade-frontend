@@ -20,6 +20,16 @@ export const getStuId = async () => {
   }
 };
 
+export const getInstId = async () => {
+  try {
+    const response = await api.get("/api/institute/inst-id");
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 // Prefix-searches students by their studentId (e.g. "STU_1000") for the
 // chat page's "Global" section.
 export const searchStudentByStudentId = async (query) => {

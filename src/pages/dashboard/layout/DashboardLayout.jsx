@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
-import { getStuId } from "../../../../api/userApi";
+import { getStuId, getInstId } from "../../../../api/userApi";
 import {
   Menu,
   Video,
@@ -667,26 +667,36 @@ export const LearningOverview = () => {
 };
 
 const StudentIdBadge = () => {
-  const [studentId, setStudentId] = useState(null);
+  const [displayId, setDisplayId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const userRole = (localStorage.getItem("Role") || localStorage.getItem("role") || "").toLowerCase();
+  const isInstituteRole = ["admin", "institute", "educator"].includes(userRole);
 
   useEffect(() => {
     let isMounted = true;
 
-    const fetchStuId = async () => {
+    const fetchId = async () => {
       try {
-        const data = await getStuId();
-        if (isMounted && data?.success) {
-          setStudentId(data.studentId || null);
+        if (isInstituteRole) {
+          const data = await getInstId();
+          if (isMounted && data?.success) {
+            setDisplayId(data.instituteId || null);
+          }
+        } else {
+          const data = await getStuId();
+          if (isMounted && data?.success) {
+            setDisplayId(data.studentId || null);
+          }
         }
       } catch (error) {
-        console.error("Fetch student ID error:", error);
+        console.error("Fetch ID error:", error);
       } finally {
         if (isMounted) setIsLoading(false);
       }
     };
 
-    fetchStuId();
+    fetchId();
     return () => {
       isMounted = false;
     };
@@ -696,19 +706,19 @@ const StudentIdBadge = () => {
     return <div className="h-8 w-36 rounded-full bg-slate-100 animate-pulse" aria-hidden="true" />;
   }
 
-  if (!studentId) return null;
+  if (!displayId) return null;
 
   return (
     <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 px-3.5 py-1.5 shadow-sm">
       <Fingerprint className="h-4 w-4 shrink-0 text-[#10b981]" strokeWidth={2.5} />
       <span className="text-[11px] font-bold uppercase tracking-wide text-emerald-700/70">
-        Student ID
+        {isInstituteRole ? "Institute ID" : "Student ID"}
       </span>
       <span className="text-[11px] font-bold text-emerald-700/70">:</span>
       <span className="text-[11px] font-bold uppercase tracking-wide text-emerald-700/70">
       </span>
       <span className="text-[13px] font-mono font-bold tracking-tight text-emerald-800">
-        {studentId}
+        {displayId}
       </span>
     </div>
   );

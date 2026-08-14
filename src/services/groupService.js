@@ -185,6 +185,7 @@ export const createGroup = async ({
   courseId = null,
   privacy = "private",
   photo = "",
+  memberUids = [],
 }) => {
   try {
     const response = await api.post("/api/chat/group/create", {
@@ -193,10 +194,23 @@ export const createGroup = async ({
       courseId,
       privacy,
       photo,
+      memberUids,
     });
     return response.data;
   } catch (error) {
     console.error("createGroup error:", error);
+    throw error;
+  }
+};
+
+export const addMembersToGroup = async (groupId, memberUids = []) => {
+  try {
+    const response = await api.post(`/api/chat/group/${groupId}/add-members`, {
+      memberUids,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("addMembersToGroup error:", error);
     throw error;
   }
 };
