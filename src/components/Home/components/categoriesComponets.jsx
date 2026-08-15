@@ -50,7 +50,7 @@ export default function CourseCategoriesComponents({ categories = EXPLORE_CATEGO
       <div className="mx-auto max-w-5xl">
         <h2 className="text-center text-2xl font-medium leading-snug text-[#1A1A2E] sm:text-3xl md:text-[2.15rem]">
           Explore Top <span className="font-extrabold text-[#0F9D58]">Courses Categories</span>
-          <br className="hidden sm:block" /> That Change Yourself
+          <br className="hidden sm:block" /> That change Yourself
         </h2>
 
         <div
