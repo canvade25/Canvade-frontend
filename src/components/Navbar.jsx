@@ -210,7 +210,6 @@ export default function Navbar() {
                 src={LOGO_SRC}
                 alt="Canvade"
                 className="h-6 sm:h-7 md:h-8 w-auto cursor-pointer object-contain shrink-0"
-                onClick={() => navigate("/")}
               />
 
               <div className="hidden h-11 md:flex items-center rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm">
@@ -262,7 +261,7 @@ export default function Navbar() {
                   {isDashboardDropdownOpen && (
                     <div className="absolute top-[130%] left-0 bg-white border border-gray-100 rounded-xl shadow-xl p-2 min-w-[180px] flex flex-col z-[110]">
                       <Link
-                        to="/admin/dashboard"
+                        to="/get-started/login/educator/signup"
                         onClick={() => setIsDashboardDropdownOpen(false)}
                         className={`px-4 py-2.5 rounded-lg text-[13px] font-sans font-medium transition-colors text-left ${
                           isActive("/admin/dashboard")
@@ -273,7 +272,7 @@ export default function Navbar() {
                         Admin Dashboard
                       </Link>
                       <Link
-                        to="/dashboard"
+                        to="/get-started/login/student/signup"
                         onClick={() => setIsDashboardDropdownOpen(false)}
                         className={`px-4 py-2.5 rounded-lg text-[13px] font-sans font-medium transition-colors text-left ${
                           isActive("/dashboard")

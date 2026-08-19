@@ -1,5 +1,6 @@
 import { ArrowRight, Building2, GraduationCap } from "lucide-react";
 
+
 const LOGO_SRC = "/canvade.png";
 
 export default function Step1({ onStudentSignup, onInstitutionSignup, onLoginClick }) {

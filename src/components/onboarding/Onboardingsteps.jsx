@@ -1,3 +1,4 @@
+import { FcGoogle } from "react-icons/fc";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EmailOtpVerifier from "../Auth/EmailOtpVerifier";
@@ -24,6 +25,7 @@ const getRandomIndex = (max) => {
   }
   return Math.floor(Math.random() * max);
 };
+
 const genCaptcha = (previous = "") => {
   let next = "";
   do {
@@ -34,7 +36,9 @@ const genCaptcha = (previous = "") => {
   } while (next === previous);
   return next;
 };
-
+const handleGoogleSignup = () => {
+  console.log("Google signup clicked");
+};
 // ─── shared style tokens ───────────────────────────────────────────────────
 const inp =
   "w-full rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none transition focus:border-[#24977a] focus:ring-1 focus:ring-emerald-50";
@@ -125,7 +129,7 @@ function AccountDetails({
           <input
             name="password"
             type={showPass ? "text" : "password"}
-            placeholder="Enter Your Password"
+            placeholder="Password should contain 6 digits"
             value={data.password}
             onChange={onChange}
             className={`${inp} pr-10`}
@@ -880,27 +884,36 @@ export default function OnboardingSteps({ back: backToAuth, parentFormData }) {
       return `Please fill: ${missing.map((field) => fieldLabels[field] || field).join(", ")}`;
     }
 
-    if (step === 0) {
-      if (formData.password !== formData.confirmPassword) {
-        return "Passwords do not match.";
-      }
-      if (formData.captchaInput.trim().toLowerCase() !== captchaCode.toLowerCase()) {
-        refreshCaptcha();
-        return "Invalid captcha code.";
-      }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        return "Please enter a valid email address.";
-      }
-      if (!emailVerified) {
-        return "Please verify your email address first.";
-      }
-      if (formData.phone.trim().length < 7) {
-        return "Please enter a valid phone number.";
-      }
-      if (!acceptedTerms || !acceptedPrivacy) {
-        return "Please accept the Terms & Conditions and Privacy Policy.";
-      }
-    }
+   if (step === 0) {
+  if (formData.password.length < 6) {
+    return "Password must be at least 6 characters.";
+  }
+
+  if (formData.password !== formData.confirmPassword) {
+    return "Passwords do not match.";
+  }
+
+  if (formData.captchaInput.trim().toLowerCase() !== captchaCode.toLowerCase()) {
+    refreshCaptcha();
+    return "Invalid captcha code.";
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    return "Please enter a valid email address.";
+  }
+
+  if (!emailVerified) {
+    return "Please verify your email address first.";
+  }
+
+  if (formData.phone.trim().length < 7) {
+    return "Please enter a valid phone number.";
+  }
+
+  if (!acceptedTerms || !acceptedPrivacy) {
+    return "Please accept the Terms & Conditions and Privacy Policy.";
+  }
+}
 
     return "";
   };
@@ -1061,8 +1074,10 @@ export default function OnboardingSteps({ back: backToAuth, parentFormData }) {
       {subStep === 3 && (
         <CareerDetails data={formData} onChange={handleChange} />
       )}
+      
 
       {/* Error message */}
+            {/* Error message */}
       {error && (
         <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-[11px] text-red-600 border border-red-100">
           {error}
@@ -1071,20 +1086,16 @@ export default function OnboardingSteps({ back: backToAuth, parentFormData }) {
 
       {/* Action buttons */}
       <div className={`flex gap-3 ${subStep === 3 ? "mt-4" : "mt-7"}`}>
-        <button
-          type="button"
-          onClick={() => {
-            if (subStep === 0) {
-              if (backToAuth) backToAuth();
-            } else {
-              setSubStep((s) => s - 1);
-            }
-          }}
-          disabled={loading}
-          className="flex-1 rounded-xl bg-gray-200 py-2.5 text-[12px] font-medium text-gray-800 transition hover:bg-gray-300 disabled:opacity-50"
-        >
-          {subStep === 0 ? "Back to Login" : "Back"}
-        </button>
+        {subStep !== 0 && (
+          <button
+            type="button"
+            onClick={() => setSubStep((s) => s - 1)}
+            disabled={loading}
+            className="flex-1 rounded-xl bg-gray-200 py-2.5 text-[12px] font-medium text-gray-800 transition hover:bg-gray-300 disabled:opacity-50"
+          >
+            Back
+          </button>
+        )}
 
         {subStep < 3 ? (
           <button
@@ -1098,16 +1109,52 @@ export default function OnboardingSteps({ back: backToAuth, parentFormData }) {
           <button
             type="button"
             onClick={handleSubmit}
-          disabled={loading}
-          className="flex-1 rounded-lg bg-emerald-500 py-2.5 text-[13px] font-semibold text-white transition hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
+            disabled={loading}
+            className="flex-1 rounded-lg bg-emerald-500 py-2.5 text-[13px] font-semibold text-white transition hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
             Save and Go to Site
           </button>
         )}
       </div>
+
+      {subStep === 0 && (
+        <>
+          <div className="relative flex items-center py-1 mt-4">
+            <div className="flex-grow border-t border-gray-300" />
+            <span className="mx-2 text-[10px] font-normal text-gray-500 uppercase">OR</span>
+            <div className="flex-grow border-t border-gray-300" />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleSignup}
+            className="mx-auto flex h-[42px] w-[200px] items-center justify-center gap-2 rounded-md border border-gray-200 bg-gray-200 py-2 text-[13px] font-normal text-gray-600 transition hover:bg-gray-50"
+          >
+            Sign in with Google
+            <FcGoogle size={16} />
+          </button>
+
+          <div className="pt-2">
+            <div className="flex flex-row items-center justify-center gap-2 sm:gap-4">
+              <span className="text-[13px] sm:text-[14px] font-normal text-[#3a4e82] whitespace-nowrap">
+                Already have an account?
+              </span>
+              <button
+                type="button"
+                onClick={backToAuth}
+                className="rounded-full bg-[#24977a] px-4 py-1.5 text-[12px] sm:text-[14px] font-normal text-white transition hover:bg-[#1d7a63] active:scale-95 whitespace-nowrap"
+              >
+                Log in
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
+
+
 
 // import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
