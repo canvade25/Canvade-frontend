@@ -155,6 +155,17 @@ const ChatPage = () => {
         console.log("Firebase Auth sign-in succeeded for uid:", currentUid);
       })
       .catch((error) => {
+        // In local dev with dummy Firebase credentials, this is expected —
+        // realtime chat won't work locally but all other features will.
+        const isDevDummyError =
+          error.code === "auth/unknown-api-key" ||
+          error.code === "auth/invalid-api-key" ||
+          error.code === "auth/argument-error" ||
+          (import.meta.env.VITE_FIREBASE_API_KEY || "").includes("dummy");
+        if (isDevDummyError) {
+          console.warn("[DEV] Firebase chat auth skipped (dummy credentials). Realtime chat disabled locally.");
+          return;
+        }
         console.error("Firebase custom-token sign-in failed:", error);
         showError(`Live chat sign-in failed: ${error.code || error.message}`);
       });

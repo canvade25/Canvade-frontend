@@ -6,7 +6,7 @@ export default function AdvertisementBanner() {
   const navigate = useNavigate();
 
   return (
-    <section className="bg-white py-6 md:py-7">
+    <section className="bg-white py-4 md:py-5">
       <div className="mx-auto max-w-[1700px] px-4 md:px-8 lg:px-12">
         <div className="relative isolate overflow-hidden rounded-2xl bg-[#063f34] px-5 py-5 md:px-8 md:py-6">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_35%,rgba(16,185,129,0.34),transparent_32%),linear-gradient(90deg,rgba(0,0,0,0.08),transparent_55%)]" />

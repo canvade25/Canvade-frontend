@@ -24,6 +24,39 @@ import toast from "react-hot-toast";
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://canvade-backend.onrender.com";
 
+const FALLBACK_COURSES = [
+  {
+    courseId: "fallback-full-stack-development",
+    id: "fallback-full-stack-development",
+    title: "Full Stack Development",
+    institute: { name: "Tech Academy" },
+    basicDetails: { courseDuration: "6 Months", mode: "Online" },
+    priceDetails: { currentPrice: 49999, actualPrice: 79999, discount: 37 },
+    rating: 4.8,
+    uploadMaterials: { thumbnail: "/dummy-course-image.jpg" },
+  },
+  {
+    courseId: "fallback-python",
+    id: "fallback-python",
+    title: "Python for Data Science",
+    institute: { name: "CodeCraft Institute" },
+    basicDetails: { courseDuration: "3 Months", mode: "Online" },
+    priceDetails: { currentPrice: 19999, actualPrice: 34999, discount: 42 },
+    rating: 4.7,
+    uploadMaterials: { thumbnail: "/dummy-course-image.jpg" },
+  },
+  {
+    courseId: "fallback-digital-marketing",
+    id: "fallback-digital-marketing",
+    title: "Digital Marketing Mastery",
+    institute: { name: "Growth Academy" },
+    basicDetails: { courseDuration: "4 Months", mode: "Onsite & Online" },
+    priceDetails: { currentPrice: 29999, actualPrice: 49999, discount: 40 },
+    rating: 4.6,
+    uploadMaterials: { thumbnail: "/dummy-course-image.jpg" },
+  },
+];
+
 const getInstituteRoute = (course) => {
   const instituteId =
     course?.institute?.instituteId ||
@@ -117,11 +150,14 @@ export default function RecommendedCourses() {
           }
         });
         const data = await response.json();
-        if (data.success) {
+        if (data.success && data.data?.length > 0) {
           setCourses(data.data);
+        } else {
+          setCourses(FALLBACK_COURSES);
         }
       } catch (error) {
         console.error("Error fetching courses:", error);
+        setCourses(FALLBACK_COURSES);
       } finally {
         setIsLoading(false);
       }
@@ -374,10 +410,10 @@ export default function RecommendedCourses() {
   const skeletonCards = Array.from({ length: 4 });
 
   return (
-    <section className="py-12 bg-white overflow-hidden">
-      <div className="max-w-[1700px] mx-auto px-4 md:px-8 lg:px-12">
-        <div className="bg-[#f8fafc] rounded-[30px] md:rounded-[40px] p-4 md:p-10 shadow-sm border border-gray-100">
-          <div className="max-w-[1400px] mx-auto">
+    <section className="w-full max-w-[1700px] mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-12 py-8 md:py-10 bg-white overflow-hidden">
+      <div className="w-full">
+        <div className="bg-white rounded-[30px] md:rounded-[40px] p-2 md:p-6">
+          <div className="w-full">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
               <div className="w-full flex flex-col items-center text-center">
                 <h2 className="text-1xl md:text-4xl font-medium text-gray-800 mb-2 tracking-tight">

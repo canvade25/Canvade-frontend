@@ -159,15 +159,47 @@ export default function Navbar() {
     }
 
     let mounted = true;
-    getProfile()
-      .then((res) => {
-        if (!mounted || !res?.success) return;
-        const data = res.data || {};
-        setProfileName(data.displayName || "");
-        setProfileImage(data.profileImage || "");
-        setStudentId(data.studentId || null);
-      })
-      .catch((error) => console.error("Fetch profile error:", error));
+    const fetchProfileData = () => {
+      getProfile()
+        .then((res) => {
+          if (!mounted) return;
+          const data = res?.data || res || {};
+          
+          let name = data.displayName || data.name || data.instituteName || getStoredUser()?.displayName || getStoredUser()?.name || "";
+          if (!name || name.trim().toLowerCase() === "unknown") {
+            name = isInstituteRole ? "Institute Account" : "Student Account";
+          }
+          setProfileName(name);
+
+          let imgUrl = data.profileImage || data.logo || getStoredUser()?.profileImage || getStoredUser()?.logo || "";
+          if (imgUrl && imgUrl.startsWith("/")) {
+            const apiBase = import.meta.env.VITE_API_URL || "https://canvade-backend.onrender.com";
+            imgUrl = `${apiBase}${imgUrl}`;
+          }
+          setProfileImage(imgUrl);
+          setStudentId(data.studentId || getStoredUser()?.studentId || null);
+        })
+        .catch((error) => {
+          console.error("Fetch profile error:", error);
+          const stored = getStoredUser();
+          if (stored) {
+            let name = stored.displayName || stored.name || stored.instituteName || "";
+            if (!name || name.trim().toLowerCase() === "unknown") {
+              name = isInstituteRole ? "Institute Account" : "Student Account";
+            }
+            setProfileName(name);
+            let imgUrl = stored.profileImage || stored.logo || "";
+            if (imgUrl && imgUrl.startsWith("/")) {
+              const apiBase = import.meta.env.VITE_API_URL || "https://canvade-backend.onrender.com";
+              imgUrl = `${apiBase}${imgUrl}`;
+            }
+            setProfileImage(imgUrl);
+            setStudentId(stored.studentId || null);
+          }
+        });
+    };
+
+    fetchProfileData();
 
     if (isInstituteRole) {
       getInstId()
@@ -178,8 +210,12 @@ export default function Navbar() {
         .catch((error) => console.error("Fetch institute ID error:", error));
     }
 
+    // Refresh instantly when profile photo is saved elsewhere
+    window.addEventListener("profile-updated", fetchProfileData);
+
     return () => {
       mounted = false;
+      window.removeEventListener("profile-updated", fetchProfileData);
     };
   }, [isLoggedIn]);
 
@@ -206,11 +242,13 @@ export default function Navbar() {
 
             {/* Left — Logo + Search */}
             <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0 min-w-0">
-              <img
-                src={LOGO_SRC}
-                alt="Canvade"
-                className="h-6 sm:h-7 md:h-8 w-auto cursor-pointer object-contain shrink-0"
-              />
+              <Link to="/">
+                <img
+                  src={LOGO_SRC}
+                  alt="Canvade"
+                  className="h-6 sm:h-7 md:h-8 w-auto cursor-pointer object-contain shrink-0"
+                />
+              </Link>
 
               <div className="hidden h-11 md:flex items-center rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm">
                 <Search size={17} className="text-gray-400 ml-3 shrink-0" />

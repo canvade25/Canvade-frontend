@@ -45,7 +45,7 @@ export default function CommunityHero() {
   const navigate = useNavigate();
 
   return (
-    <section className="w-full max-w-[1700px] mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-12">
+    <section className="w-full max-w-[1700px] mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-12 py-8 md:py-10">
     <div className="relative w-full rounded-[20px] sm:rounded-[30px] md:rounded-[40px] overflow-hidden bg-[#F5F6FA] px-4 sm:px-6 py-10 sm:py-12 md:py-14 lg:py-16">
       {/* Decorative background blob */}
       <div

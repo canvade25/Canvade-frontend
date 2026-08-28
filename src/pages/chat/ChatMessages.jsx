@@ -102,6 +102,12 @@ const ChatMessages = ({
         setLiveMessages(rawMessages.map((m) => mapper(m, currentUid)));
       };
       const handleError = (error) => {
+        // Suppress error toast when running locally with dummy Firebase credentials
+        const isDevDummy = (import.meta.env.VITE_FIREBASE_API_KEY || "").includes("dummy");
+        if (isDevDummy) {
+          console.warn("[DEV] Realtime chat listener skipped (dummy Firebase credentials).");
+          return;
+        }
         console.error("Realtime messages listener error:", error);
         showError(`Live chat updates unavailable: ${error.code || error.message}`);
       };
