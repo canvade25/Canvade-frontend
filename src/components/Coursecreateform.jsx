@@ -310,9 +310,7 @@ function validateStep3(data) {
 
 function validateStep4(data) {
   const errors = {};
-  if (!data.plans || data.plans.length === 0) {
-    errors.plans = "Select at least one batch to publish this course under";
-  }
+  // Removed strict requirement for batch selection to prevent onboarding deadlock
   return errors;
 }
 

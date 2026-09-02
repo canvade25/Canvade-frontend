@@ -46,7 +46,7 @@ export default function CourseCategoriesComponents({ categories = EXPLORE_CATEGO
 
   return (
     <section className="w-full max-w-[1700px] mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-12">
-    <div className="w-full rounded-[30px] md:rounded-[40px] overflow-hidden bg-[#F5F6FA] px-6 py-14 md:px-6">
+    <div className="w-full rounded-[30px] md:rounded-[40px] overflow-hidden bg-white px-6 py-14 md:px-6">
       <div className="mx-auto max-w-5xl">
         <h2 className="text-center text-2xl font-medium leading-snug text-[#1A1A2E] sm:text-3xl md:text-[2.15rem]">
           Explore Top <span className="font-extrabold text-[#0F9D58]">Courses Categories</span>

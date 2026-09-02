@@ -318,7 +318,7 @@ const normalizeCourse = (course, index) => {
       course?.basicDetails?.mode ||
       course?.basicDetails?.learningMode ||
       "Mode",
-    location: course?.basicDetails?.locations?.[0] || "Location unavailable",
+    location: formatLocation(course?.basicDetails?.locations?.[0]) || "Location unavailable",
     locationCount: Array.isArray(course?.basicDetails?.locations)
       ? course.basicDetails.locations.length
       : 0,
@@ -663,7 +663,7 @@ export default function InstituteView() {
       (p) => (p - 1 + displayReviews.length) % displayReviews.length,
     );
 
-  const featuredReview = displayReviews[currentReviewIdx];
+  const featuredReview = displayReviews.length > 0 ? displayReviews[currentReviewIdx % displayReviews.length] : null;
   const featuredReviewerName =
     featuredReview?.studentName || featuredReview?.name || "Anonymous";
   const featuredReviewInitials =
@@ -1341,7 +1341,7 @@ export default function InstituteView() {
                           }}
                         >
                           <span className="text-[10px] font-medium text-[#2563eb] uppercase tracking-tight truncate min-w-0">
-                            {item.institute?.name}
+                            {item.institute?.name || item.institution || "Institute"}
                           </span>
                           <BadgeCheck className="w-4 h-4 text-white fill-[#3b82f6] flex-shrink-0" />
                         </div>

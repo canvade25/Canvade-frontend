@@ -11,6 +11,7 @@ import {
   Star,
   Share2,
   Bell,
+  BadgeCheck,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { sendEnquiry } from "../../../api/enquireApi";
@@ -97,6 +98,13 @@ export const normalizeInstitute = (institute, index) => {
           .join(", ")
     : "Moti Nagar, New Delhi";
 
+  const rawLocation = institute?.location || institute?.basicDetails?.location || locationLabel;
+  const location = typeof firstLocation === "object" && firstLocation?.city 
+    ? firstLocation.city 
+    : rawLocation.split(",")?.[0]?.trim() || "New Delhi";
+
+  const extraLocationsCount = Math.max(locations.length - 1, 0);
+
   return {
     id: institute?.id || institute?._id || index,
     anim: ["anim-left", "anim-top", "anim-bottom", "anim-right"][index % 4],
@@ -114,21 +122,17 @@ export const normalizeInstitute = (institute, index) => {
       institute?.learningMode ||
       institute?.basicDetails?.mode ||
       institute?.basicDetails?.learningMode ||
-      null, // dummy hataya
+      null,
 
     rating:
       institute?.rating ||
       institute?.averageRating ||
       institute?.basicDetails?.rating ||
-      null, // dummy hataya
-      avgRating: institute?.avgRating || institute?.averageRating || institute?.rating || 0,
+      null,
+    avgRating: institute?.avgRating || institute?.averageRating || institute?.rating || 0,
 
-    location:
-      institute?.location || institute?.basicDetails?.location || locationLabel,
-    extraLocations:
-      institute?.extraLocations ||
-      institute?.basicDetails?.extraLocations ||
-      (locations.length > 1 ? `${locations.length - 1} More` : ""),
+    location,
+    extraLocations: extraLocationsCount > 0 ? `${extraLocationsCount} More` : "",
     image:
       institute?.media?.photos?.[0] ||
       institute?.image ||
@@ -190,12 +194,11 @@ function InstituteRecommendationSection({
 
         const displayItems =
           instituteList.length > 0 ? instituteList : FALLBACK_INSTITUTES;
-
         setInstitutes(displayItems.map(normalizeInstitute));
       } catch (error) {
         if (error.name !== "AbortError") {
           console.error("Error fetching institutes:", error);
-          setInstitutes([]);
+          setInstitutes(FALLBACK_INSTITUTES.map(normalizeInstitute));
         }
       } finally {
         setIsLoading(false);
@@ -311,6 +314,11 @@ function InstituteRecommendationSection({
 
   const handleInstituteCardClick = async (institute) => {
     const instituteId = institute?.id;
+    if (!instituteId || String(instituteId).startsWith("fallback-")) {
+      toast.error("This is a preview institute. Real institutes will appear here.");
+      return;
+    }
+
     const token =
       localStorage.getItem("token") || localStorage.getItem("Token");
 
@@ -355,8 +363,8 @@ function InstituteRecommendationSection({
   const skeletonCards = Array.from({ length: 4 });
 
   return (
-    <section className="px-4 md:px-16 py-12 bg-white overflow-hidden">
-      <div className="max-w-[1400px] mx-auto">
+    <section className="w-full max-w-[1700px] mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-12 py-8 md:py-10 bg-white overflow-hidden">
+      <div className="w-full">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl md:text-4xl font-heading font-medium text-gray-800 tracking-tight">
             {title}
@@ -518,14 +526,7 @@ export function InstituteCard({ item, onCardClick, onMenuClick, onChatClick }) {
               <div className="flex items-center gap-0.5 pr-3">
                 <Star size={12} fill="#FFC107" stroke="#FFC107" />
                 <span className="text-[11px] text-gray-700">
-                  {item.avgRating > 0 && (
-                    <div className="flex items-center gap-0.5 pr-3">
-                      <Star size={12} fill="#FFC107" stroke="#FFC107" />
-                      <span className="text-[11px] text-gray-700">
-                        {Number(item.avgRating).toFixed(1)}
-                      </span>
-                    </div>
-                  )}
+                  {Number(item.avgRating || item.rating || 5.0).toFixed(1)}
                 </span>
               </div>
             </div>
@@ -534,9 +535,12 @@ export function InstituteCard({ item, onCardClick, onMenuClick, onChatClick }) {
       </div>
 
       <div className="p-4 pt-3">
-        <h3 className="text-base font-medium text-gray-900 leading-tight mb-2 line-clamp-2 min-h-[40px]">
-          {item.name}
-        </h3>
+        <div className="flex items-center gap-1.5 mb-2 min-h-[40px]">
+          <h3 className="text-base font-medium text-gray-900 leading-tight line-clamp-2">
+            {item.name}
+          </h3>
+          <BadgeCheck className="w-4.5 h-4.5 text-white fill-[#3b82f6] flex-shrink-0" />
+        </div>
 
         <div className="flex items-stretch text-gray-700 text-[11px] mb-2 border-b border-gray-200">
           <div className="flex items-center gap-1.5 font-medium pb-3 pr-4">
@@ -552,7 +556,7 @@ export function InstituteCard({ item, onCardClick, onMenuClick, onChatClick }) {
         <div className="flex items-center gap-1.5 text-gray-700 text-[12px] mb-2">
           <MapPin className="w-4 h-4 flex-shrink-0 text-gray-700" />
           <span className="truncate">
-            {item.location}{" "}
+            {item.location}
             {item.extraLocations && (
               <span className="text-gray-800 ml-1">
                 ({item.extraLocations})
@@ -561,21 +565,34 @@ export function InstituteCard({ item, onCardClick, onMenuClick, onChatClick }) {
           </span>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onChatClick?.(item);
             }}
             className="flex-grow py-2 rounded-lg bg-[#E5E5E5] hover:bg-emerald-600 hover:text-white text-gray-700 text-[12px] font-semibold transition-all"
           >
-            Chat
+            Enquiry
+          </button>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              const instId = item.id;
+              navigate(instId ? `/instituteview/${instId}` : "/updates");
+            }}
+            className="flex-grow py-2 rounded-lg bg-[#E5E5E5] hover:bg-emerald-600 hover:text-white text-gray-700 text-[12px] font-semibold transition-all"
+          >
+            Updates
           </button>
 
           <button
             type="button"
             onClick={onMenuClick}
-            className="ml-2 p-1 rounded-full hover:bg-gray-100 flex-shrink-0"
+            className="p-1 rounded-full hover:bg-gray-100 flex-shrink-0"
             aria-label="More options"
           >
             <MoreVertical className="w-5 h-5 text-[#707070]" />

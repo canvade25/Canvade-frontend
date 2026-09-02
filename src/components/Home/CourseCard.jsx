@@ -68,11 +68,12 @@ export default function CourseCard({
   );
 
   const location = isRemoteOrOnline
-    ? item?.basicDetails?.locations?.[0] || "Remote"
-    : item?.institute?.locations?.[0]
-      ? `${item.institute.locations[0].addressLine1}, ${item.institute.locations[0].city}, ${item.institute.locations[0].state}`
-      : item?.basicDetails?.locations?.[0] ||
-        item?.location ||
+    ? "Remote"
+    : item?.institute?.locations?.[0]?.city
+      ? item.institute.locations[0].city
+      : item?.basicDetails?.locations?.[0]?.city ||
+        item?.location?.split(",")?.[0]?.trim() ||
+        DEFAULT_CARD.location.split(",")?.[0]?.trim() ||
         DEFAULT_CARD.location;
   const instituteLocations = item?.institute?.locations || [];
   const extraLocationsCount = Math.max(instituteLocations.length - 1, 0);
@@ -129,7 +130,7 @@ export default function CourseCard({
     };
   }, [courseId]);
 
-  const rating = liveRating;
+  const rating = liveRating || item?.rating || DEFAULT_CARD.rating;
 
   const handleImageLoad = useCallback(() => {
     setImageLoaded(true);
@@ -260,12 +261,10 @@ export default function CourseCard({
                 event.stopPropagation();
                 onEnrollClick?.(event);
               }}
-              className="group/enroll bg-[#E5E5E5] hover:bg-emerald-600 hover:text-white text-gray-700 text-[13px] font-semibold px-5 md:px-5 py-3 rounded-md flex items-center gap-2 transition-all"
+              className="group/enroll bg-[#E5E5E5] hover:bg-emerald-600 hover:text-white text-gray-700 text-[13px] font-semibold px-4 py-2.5 rounded-md flex items-center gap-1.5 transition-all"
             >
-              Enroll
-              <span className="hidden sm:inline-flex w-4 h-4 rounded-md bg-[#484848] text-white items-center justify-center align-middle transition-colors group-hover/enroll:bg-white group-hover/enroll:text-emerald-700">
-                <ArrowRight className="w-2.5 h-2.5" />
-              </span>
+              Enroll Now
+              <ArrowRight className="w-3.5 h-3.5 transition-colors group-hover/enroll:text-white" />
             </button>
 
             <button

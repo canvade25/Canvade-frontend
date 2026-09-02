@@ -32,16 +32,20 @@ export default function EmailOtpVerifier({ email, name, verified, onVerified }) 
       toast.error("Enter a valid email address first.");
       return;
     }
+
+    const otpCode = generateOtpCode();
+    generatedOtpRef.current = { otpCode, expiresAt: Date.now() + OTP_TTL_MS };
+
+    // Local Test Bypass if keys are missing
     if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-      toast.error("Email verification isn't configured yet (missing EmailJS keys)");
+      console.warn("EmailJS keys missing. Logging generated verification OTP for local testing:", otpCode);
+      toast.success(`[DEV MODE] Local Bypass: OTP is ${otpCode}`);
+      setOtpSent(true);
       return;
     }
 
     setSending(true);
     try {
-      const otpCode = generateOtpCode();
-      generatedOtpRef.current = { otpCode, expiresAt: Date.now() + OTP_TTL_MS };
-
       await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,

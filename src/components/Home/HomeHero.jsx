@@ -65,10 +65,7 @@ function HomeHero() {
     <>
       <section className="bg-white pt-[4.5rem] sm:pt-[4.75rem] md:pt-[5rem] pb-2 sm:pb-4 transition-all duration-200">
         <div className="mx-auto relative w-full max-w-[1700px] px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-12 py-2 sm:py-3">
-          {/* Social Bar — desktop only */}
-          <div className="hidden lg:block">
-            <SocialBar />
-          </div>
+          {/* Social Bar — removed */}
 
           <HeroContainer
             currentImageIndex={currentImageIndex}
@@ -85,6 +82,7 @@ function HomeHero() {
       </section>
 
       <ScrollToTopButton />
+      <SocialBar />
     </>
   );
 }

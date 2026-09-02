@@ -317,7 +317,7 @@ const UpdateForm = ({
       className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
     >
       <h2 className="mb-4 text-[15px] font-bold text-slate-900">
-        {isEditMode ? "Edit Update" : "Create a Update"}
+        {isEditMode ? "Edit Update" : "Create an Update"}
       </h2>
 
       {error ? (
@@ -714,7 +714,7 @@ export default function BlogsPressDashboard() {
           className="inline-flex w-fit items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-emerald-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
         >
           <Plus className="h-4 w-4" strokeWidth={2.75} />
-          Create a Update
+          Create an Update
         </button>
       </div>
 

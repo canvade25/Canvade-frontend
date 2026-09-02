@@ -207,7 +207,6 @@ function CourseCategoriesSection({ title, apiPath, showTopSpacer = false }) {
 
         const anims = ["anim-left", "anim-top", "anim-bottom", "anim-right"];
         const displayItems = items.length > 0 ? items : FALLBACK_COURSES;
-
         setCourses(
           displayItems.map((course, index) => ({
             ...course,
@@ -217,7 +216,13 @@ function CourseCategoriesSection({ title, apiPath, showTopSpacer = false }) {
       } catch (error) {
 
         toast.error("Error fetching courses:", error);
-        setCourses([]);
+        const anims = ["anim-left", "anim-top", "anim-bottom", "anim-right"];
+        setCourses(
+          FALLBACK_COURSES.map((course, index) => ({
+            ...course,
+            anim: anims[index % anims.length],
+          }))
+        );
       } finally {
         setIsLoading(false);
       }

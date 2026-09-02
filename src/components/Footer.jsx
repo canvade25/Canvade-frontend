@@ -56,8 +56,9 @@ export default function Footer() {
       "Financial Technology",
     ],
     "Popular Searches": [
-      "Top Collages (Country)",
-      "Top Collages (City)",
+      "Top Colleges (Country)",
+      "Top Colleges (City)",
+      "Top Exams",
       "Weekend Institutes (Country)",
       "Weekend Institutes (City)",
       "Short Term Course",
