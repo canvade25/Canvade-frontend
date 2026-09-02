@@ -2276,12 +2276,7 @@ import {
   Star,
 } from "lucide-react";
 
-const summaryStats = [
-  { label: "Total Leads", value: 2 },
-  { label: "This Month Leads", value: 2 },
-  { label: "Total Enrollments", value: 1 },
-  { label: "Ongoing Students", value: 1 },
-];
+
 
 const activityIconMap = {
   cart_added: <ShoppingCart className="w-5 h-5 text-blue-500" />,
@@ -2921,6 +2916,53 @@ const defaultFilters = {
 
 const LeadsEnquiries = () => {
   const [filters, setFilters] = useState(defaultFilters);
+  const [leadsCount, setLeadsCount] = useState(0);
+  const [thisMonthLeads, setThisMonthLeads] = useState(0);
+  const [enrollmentCount, setEnrollmentCount] = useState(0);
+  const [ongoingCount, setOngoingCount] = useState(0);
+  const BASE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const headers = { Authorization: `Bearer ${token}` };
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+
+    // Fetch leads
+    axios
+      .get(`${BASE_API_URL}/api/activities/my`, { headers })
+      .then((res) => {
+        const data = Array.isArray(res.data.data) ? res.data.data : [];
+        setLeadsCount(data.length);
+        const monthLeads = data.filter((l) => {
+          const t = l.timestamp?.seconds
+            ? l.timestamp.seconds * 1000
+            : new Date(l.timestamp || 0).getTime();
+          return t >= startOfMonth;
+        });
+        setThisMonthLeads(monthLeads.length);
+      })
+      .catch(() => {});
+
+    // Fetch students/enrollments
+    axios
+      .get(`${BASE_API_URL}/api/enrollments/get-students`, { headers })
+      .then((res) => {
+        const data = Array.isArray(res.data.data) ? res.data.data : [];
+        setEnrollmentCount(data.length);
+        setOngoingCount(
+          data.filter((s) => (s.status || "ongoing").toLowerCase() === "ongoing").length
+        );
+      })
+      .catch(() => {});
+  }, [BASE_API_URL]);
+
+  const summaryStats = [
+    { label: "Total Leads", value: leadsCount },
+    { label: "This Month Leads", value: thisMonthLeads },
+    { label: "Total Enrollments", value: enrollmentCount },
+    { label: "Ongoing Students", value: ongoingCount },
+  ];
 
   return (
     <div className="w-full min-h-screen bg-[#f8fafc] px-3 pb-4 sm:px-6 select-none text-left space-y-6">

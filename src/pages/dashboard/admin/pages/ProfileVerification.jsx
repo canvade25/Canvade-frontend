@@ -156,9 +156,13 @@ const Input = ({
   onChange,
   style = {},
   readOnly = false,
+  id,
+  "aria-label": ariaLabel,
   ...props
 }) => (
   <input
+    id={id}
+    aria-label={ariaLabel || placeholder}
     placeholder={placeholder}
     value={value}
     onChange={onChange}
@@ -183,8 +187,10 @@ const Input = ({
   />
 );
 
-const Select = ({ value, onChange, children }) => (
+const Select = ({ value, onChange, children, id, "aria-label": ariaLabel, ...props }) => (
   <select
+    id={id}
+    aria-label={ariaLabel}
     value={value}
     onChange={onChange}
     style={{
@@ -201,6 +207,7 @@ const Select = ({ value, onChange, children }) => (
     }}
     onFocus={(e) => (e.target.style.borderColor = "#10b981")}
     onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
+    {...props}
   >
     {children}
   </select>
@@ -1341,6 +1348,11 @@ export default function InstituteProfileForm() {
           "verification.ownerName.value",
           "verification.owner.value",
           "form.ownerName",
+          // Auth user name fallbacks
+          "displayName",
+          "fullName",
+          "full_name",
+          "name",
         ]) || "";
 
       const resolvedPan = (source) =>
@@ -1784,6 +1796,8 @@ export default function InstituteProfileForm() {
               <div>
                 <Label required>Institute Name</Label>
                 <Input
+                  id="profile-institute-name"
+                  aria-label="Institute Name"
                   placeholder="e.g. ExcelR Solutions"
                   value={form.name}
                   onChange={setField("name")}
@@ -1793,6 +1807,8 @@ export default function InstituteProfileForm() {
               <div>
                 <Label required>Institution Type</Label>
                 <Select
+                  id="profile-institution-type"
+                  aria-label="Institution Type"
                   value={form.institutionType}
                   onChange={setField("institutionType")}
                 >
@@ -1807,6 +1823,8 @@ export default function InstituteProfileForm() {
               <div>
                 <Label>Owner Name</Label>
                 <Input
+                  id="profile-owner-name"
+                  aria-label="Owner Name"
                   placeholder="e.g. Rajesh Kumar"
                   value={form.ownerName}
                   onChange={setField("ownerName")}
@@ -1817,6 +1835,8 @@ export default function InstituteProfileForm() {
             <div style={{ marginBottom: 20 }}>
               <Label>Tagline</Label>
               <Input
+                id="profile-tagline"
+                aria-label="Tagline"
                 placeholder="e.g. Empowering future leaders"
                 value={form.tagline}
                 onChange={setField("tagline")}
@@ -1834,6 +1854,8 @@ export default function InstituteProfileForm() {
             <div style={{ maxWidth: 260 }}>
               <Label>Establish Date</Label>
               <input
+                id="profile-establish-date"
+                aria-label="Establish Date"
                 type="date"
                 value={form.establishDate}
                 onChange={setField("establishDate")}
