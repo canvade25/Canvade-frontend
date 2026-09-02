@@ -382,14 +382,14 @@ const Promotions = () => {
                     Renew Plan
                   </button>
                 </div>
-              ) : (
+              ) : null /* (
                 <button
                   onClick={handleUpgrade}
                   className="w-full sm:w-max min-w-[250px] border bg-[#1fa485] hover:bg-[#198f73] text-white font-bold py-2 px-6 rounded-lg text-xs transition-all shadow-sm text-center"
                 >
                   Upgrade to Pro
                 </button>
-              )}
+              ) */}
             </div>
           </div>
         </div>

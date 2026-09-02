@@ -314,6 +314,11 @@ function InstituteRecommendationSection({
 
   const handleInstituteCardClick = async (institute) => {
     const instituteId = institute?.id;
+    if (!instituteId || String(instituteId).startsWith("fallback-")) {
+      toast.error("This is a preview institute. Real institutes will appear here.");
+      return;
+    }
+
     const token =
       localStorage.getItem("token") || localStorage.getItem("Token");
 

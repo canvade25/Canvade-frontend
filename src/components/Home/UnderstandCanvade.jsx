@@ -93,7 +93,8 @@ function ReelCard({ reel, onPlay }) {
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="none"
+          loading="lazy"
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 pointer-events-none"
         />
 
