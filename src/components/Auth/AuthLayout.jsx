@@ -134,7 +134,7 @@
 //   const [signupRole, setSignupRole] = useState("student");
 
 //   return (
-//     <div className="flex min-h-screen w-screen font-sans">
+//     <div className="flex min-h-screen w-full font-sans">
 //       <div
 //         className="
 //           flex w-full min-h-screen flex-col items-center justify-center
@@ -371,7 +371,7 @@ export default function AuthLayout() {
   const [signupRole, setSignupRole] = useState("student");
 
   return (
-    <div className="flex min-h-screen w-screen font-sans">
+    <div className="flex min-h-screen w-full font-sans">
       <div
         className="
           flex w-full min-h-screen flex-col items-center justify-center

@@ -156,7 +156,7 @@ export default function InstituteOnboarding() {
   };
 
   return (
-    <div className="flex min-h-screen w-screen bg-white font-sans">
+    <div className="flex min-h-screen w-full bg-white font-sans">
       <main className="flex w-full flex-col items-center overflow-y-auto px-5 py-8 md:w-[50%] md:min-w-[420px] md:px-8 lg:px-12">
         <div className="w-full max-w-[460px]">
           <div className="mb-4 flex flex-col items-center text-center">
@@ -525,7 +525,7 @@ export default function InstituteOnboarding() {
 //   };
 
 //   return (
-//     <div className="flex min-h-screen w-screen bg-white font-sans">
+//     <div className="flex min-h-screen w-full bg-white font-sans">
 //       <main className="flex w-full flex-col items-center overflow-y-auto px-5 py-8 md:w-[50%] md:min-w-[420px] md:px-8 lg:px-12">
 //         <div className="w-full max-w-[460px]">
 //           <div className="mb-6 flex flex-col items-center text-center">
@@ -820,7 +820,7 @@ export default function InstituteOnboarding() {
 //   };
 
 //   return (
-//     <div className="flex min-h-screen w-screen bg-white font-sans">
+//     <div className="flex min-h-screen w-full bg-white font-sans">
 //       <main className="flex w-full flex-col items-center overflow-y-auto px-5 py-8 md:w-[50%] md:min-w-[420px] md:px-8 lg:px-12">
 //         <div className="w-full max-w-[620px]">
 //           <div className="mb-10 flex flex-col items-center text-center">
