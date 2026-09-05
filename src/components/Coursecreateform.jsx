@@ -29,10 +29,10 @@ const STEPS = [
   { id: 1, label: "Basic Details", icon: BookOpen },
   { id: 2, label: "Price Details", icon: DollarSign },
   { id: 3, label: "Curriculum", icon: Layout },
-  { id: 4, label: "Batch Plan", icon: Calendar },
-  { id: 5, label: "Faculty", icon: Users },
-  { id: 6, label: "Upload Materials", icon: FileUp },
-  { id: 7, label: "FAQs", icon: HelpCircle },
+  { id: 4, label: "Faculty", icon: Users },
+  { id: 5, label: "Upload Materials", icon: FileUp },
+  { id: 6, label: "FAQs", icon: HelpCircle },
+  { id: 7, label: "Batch Plan", icon: Calendar },
 ];
 
 const ACCREDITATION_OPTIONS = [
@@ -374,10 +374,10 @@ function getStepErrors(stepIndex, stepData) {
     case 0: return validateStep1(stepData[0]);
     case 1: return validateStep2(stepData[1]);
     case 2: return validateStep3(stepData[2]);
-    case 3: return validateStep4(stepData[3]);
-    case 4: return validateStep5(stepData[4]);
-    case 5: return validateStep6(stepData[5]);
-    case 6: return validateStep7(stepData[6]);
+    case 3: return validateStep5(stepData[3]); // Faculty
+    case 4: return validateStep6(stepData[4]); // Upload
+    case 5: return validateStep7(stepData[5]); // FAQs
+    case 6: return validateStep4(stepData[6]); // Batch Plan
     default: return {};
   }
 }
@@ -1741,7 +1741,7 @@ export default function CourseCreateForm({ onCancel, editCourseId }) {
     fetchCourseDetails();
   }, [editCourseId]);
 
-  const allStepData = [step1, step2, step3, step4, step5, step6, step7];
+  const allStepData = [step1, step2, step3, step5, step6, step7, step4];
 
   const getErrors = (idx) => getStepErrors(idx, allStepData);
   const stepComplete = (idx) => isStepComplete(idx, allStepData);
@@ -2112,10 +2112,10 @@ export default function CourseCreateForm({ onCancel, editCourseId }) {
       case 1: return <Step1 data={step1} setData={setStep1} fieldErrors={fe} submitted={submitted} />;
       case 2: return <Step2 data={step2} setData={setStep2} fieldErrors={fe} submitted={submitted} />;
       case 3: return <Step3 data={step3} setData={setStep3} fieldErrors={fe} submitted={submitted} />;
-      case 4: return <Step4 data={step4} setData={setStep4} fieldErrors={fe} submitted={submitted} />;
-      case 5: return <Step5 data={step5} setData={setStep5} fieldErrors={fe} submitted={submitted} />;
-      case 6: return <Step6 data={step6} setData={setStep6} fieldErrors={fe} submitted={submitted} />;
-      case 7: return <Step7 data={step7} setData={setStep7} fieldErrors={fe} submitted={submitted} />;
+      case 4: return <Step5 data={step5} setData={setStep5} fieldErrors={fe} submitted={submitted} />;
+      case 5: return <Step6 data={step6} setData={setStep6} fieldErrors={fe} submitted={submitted} />;
+      case 6: return <Step7 data={step7} setData={setStep7} fieldErrors={fe} submitted={submitted} />;
+      case 7: return <Step4 data={step4} setData={setStep4} fieldErrors={fe} submitted={submitted} />;
       default: return null;
     }
   };

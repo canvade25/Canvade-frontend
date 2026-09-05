@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Search, X, Check, MapPin } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const STORAGE_KEY = "canvade_simple_batch_planner_v1";
 const API_BASE_URL =
@@ -289,6 +290,9 @@ function loadPlannerState() {
 }
 
 const BatchPlanner = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [planner, setPlanner] = useState(loadPlannerState);
   const [selectedStatus, setSelectedStatus] = useState("active");
   const [filters, setFilters] = useState({
@@ -402,6 +406,14 @@ const BatchPlanner = () => {
   useEffect(() => {
     fetchPlannerData();
   }, [fetchPlannerData]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("create") === "true") {
+      openModal();
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.search, navigate]);
 
   const fetchStudentsForCourse = useCallback(async (courseId) => {
     if (!courseId) {
@@ -734,14 +746,6 @@ const BatchPlanner = () => {
               {isLoading ? "Loading your batches..." : "Create, manage and organize all your batches."}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => openModal()}
-            className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-lg bg-[#24977a] px-6 text-sm font-bold text-white transition hover:bg-[#1d7a63] active:scale-[0.98]"
-          >
-            <Plus className="h-4 w-4" strokeWidth={3} />
-            Add New Batch
-          </button>
         </header>
 
         <section className="mb-5 flex flex-col gap-3 sm:flex-row" aria-label="Batch stats">
@@ -951,14 +955,6 @@ const BatchPlanner = () => {
                   <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
                     Create your first batch and connect it with a course or workshop.
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => openModal()}
-                    className="mt-5 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#13b981] px-5 text-sm font-bold text-white transition hover:bg-[#07896f]"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add New Batch
-                  </button>
                 </div>
               </div>
             )}

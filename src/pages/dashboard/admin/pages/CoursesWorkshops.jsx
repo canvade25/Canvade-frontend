@@ -403,28 +403,38 @@ const CoursesAndWorkshops = () => {
             Create, manage and organize all your courses.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            if (
-              plan?.tier === "free" &&
-              plan?.limits?.courses != null &&
-              plan?.usage?.courses >= plan.limits.courses
-            ) {
-              showError(
-                `You've reached the Free plan's ${plan.limits.courses}-course limit. Upgrade to Pro for unlimited courses.`,
-              );
-              navigate("/admin/dashboard/promotions");
-              return;
-            }
-            setEditingCourseId(null);
-            setIsCreating(true);
-          }}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#10b981] hover:bg-[#0ea271] text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Add New Course
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              if (
+                plan?.tier === "free" &&
+                plan?.limits?.courses != null &&
+                plan?.usage?.courses >= plan.limits.courses
+              ) {
+                showError(
+                  `You've reached the Free plan's ${plan.limits.courses}-course limit. Upgrade to Pro for unlimited courses.`,
+                );
+                navigate("/admin/dashboard/promotions");
+                return;
+              }
+              setEditingCourseId(null);
+              setIsCreating(true);
+            }}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#10b981] hover:bg-[#0ea271] text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add New Course
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/admin/dashboard/batches?create=true")}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#10b981] hover:bg-[#0ea271] text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add New Batch
+          </button>
+        </div>
       </div>
 
       <div className="bg-white border border-slate-300 rounded-2xl shadow-sm overflow-hidden pb-6">
