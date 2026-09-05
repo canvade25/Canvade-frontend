@@ -93,7 +93,7 @@ function ReelCard({ reel, onPlay }) {
           loop
           muted
           playsInline
-          preload="none"
+          preload="metadata"
           loading="lazy"
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 pointer-events-none"
         />
@@ -254,16 +254,16 @@ export default function UnderstandCanvade() {
     ].join(" ");
 
   return (
-    <section className="px-4 sm:px-6 lg:px-12 py-8 sm:py-12 lg:py-14 bg-slate-50/60 select-none overflow-hidden border-y border-slate-100">
-      <div className="max-w-[1400px] mx-auto">
+    <section className="w-full max-w-[1700px] mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-12 py-8 sm:py-12 lg:py-14 bg-slate-50/60 select-none overflow-hidden border-y border-slate-100">
+      <div className="w-full">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 max-w-[940px] mx-auto">
-          <div className="text-left md:max-w-xl">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 w-full mx-auto">
+          <div className="w-full flex flex-col items-center text-center">
             <h2 className="text-2xl sm:text-4xl font-medium text-slate-900 tracking-tight mb-2">
               Understand <strong className="font-extrabold text-emerald-600">CANVADE</strong> in Seconds
             </h2>
-            <p className="text-slate-500 text-xs sm:text-sm leading-relaxed font-normal">
+            <p className="text-slate-500 text-xs sm:text-sm leading-relaxed font-normal max-w-2xl">
               Watch quick reels to see how Canvade helps you discover courses,
               compare institutes, and choose the right path - all in one place.
             </p>
@@ -292,7 +292,7 @@ export default function UnderstandCanvade() {
         {/* Carousel Container */}
         <div
           ref={scrollContainerRef}
-          className="flex gap-5 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory scroll-smooth max-w-[940px] mx-auto"
+          className="flex gap-5 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory scroll-smooth w-full mx-auto"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",

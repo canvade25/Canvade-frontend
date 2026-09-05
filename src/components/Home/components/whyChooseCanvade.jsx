@@ -30,8 +30,9 @@ const features = [
 
 export default function WhyChooseCanvade() {
   return (
-    <section className="w-full bg-white py-10 sm:py-14 md:py-16 px-4 sm:px-6">
-      <div className="w-full max-w-[1400px] mx-auto bg-slate-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-10">
+    <section className="w-full bg-white py-10 sm:py-14 md:py-16">
+      <div className="w-full max-w-[1700px] mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-12">
+        <div className="w-full bg-slate-50 rounded-2xl sm:rounded-[2rem] p-4 sm:p-6 md:p-8 lg:p-10">
         {/* Heading */}
         <h2 className="flex flex-wrap items-center justify-center gap-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-8 sm:mb-10 md:mb-12">
           <span>Why Students Choose</span>
@@ -67,6 +68,7 @@ export default function WhyChooseCanvade() {
                 </p>
               </div>
             ))}
+          </div>
           </div>
         </div>
       </div>

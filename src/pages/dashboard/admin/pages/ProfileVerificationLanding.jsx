@@ -166,6 +166,8 @@ export default function ProfileVerificationLanding() {
           ? serverLocations[0]
           : null;
 
+        const storedUser = parseIfJson(localStorage.getItem("user")) || {};
+
         const addressValue = firstLocation
           ? [
               firstLocation.addressLine1 || firstLocation.address1,
@@ -180,32 +182,35 @@ export default function ProfileVerificationLanding() {
           ...(payload.verification || rawData?.verification || {}),
 
           ownerName: {
-            value: payload.ownerName || payload.form?.ownerName || "",
+            value: payload?.ownerName || payload?.form?.ownerName || storedUser.ownerName || storedUser.name || "",
             verified: true,
           },
 
           instituteName: {
-            value: payload.name || payload.form?.name || "",
+            value: payload?.name || payload?.form?.name || storedUser.instituteName || storedUser.name || "",
             verified: true,
           },
           email: {
             value:
-              payload.email ||
-              payload.form?.email ||
-              (payload.verification || rawData?.verification || {})?.email
+              payload?.email ||
+              payload?.form?.email ||
+              (payload?.verification || rawData?.verification || {})?.email
                 ?.value ||
+              storedUser.email ||
               "",
             verified: true,
           },
 
           phoneNumber: {
             value:
-              payload.phoneNumber ||
-              payload.form?.phoneNumber ||
-              (payload.verification || rawData?.verification || {})?.phoneNumber
+              payload?.phoneNumber ||
+              payload?.form?.phoneNumber ||
+              (payload?.verification || rawData?.verification || {})?.phoneNumber
                 ?.value ||
-              (payload.verification || rawData?.verification || {})?.phone
+              (payload?.verification || rawData?.verification || {})?.phone
                 ?.value ||
+              storedUser.phoneNumber ||
+              storedUser.phone ||
               "",
             verified: true,
           },
@@ -232,14 +237,14 @@ export default function ProfileVerificationLanding() {
         const loadedProfile = {
           form: {
             ...EMPTY_PROFILE.form,
-            name: payload.name || payload.form?.name || "",
-            ownerName: payload.ownerName || payload.form?.ownerName || "",
-            tagline: payload.tagline || payload.form?.tagline || "",
-            description: payload.description || payload.form?.description || "",
+            name: payload?.name || payload?.form?.name || storedUser.instituteName || storedUser.name || "",
+            ownerName: payload?.ownerName || payload?.form?.ownerName || storedUser.ownerName || storedUser.name || "",
+            tagline: payload?.tagline || payload?.form?.tagline || "",
+            description: payload?.description || payload?.form?.description || "",
             establishDate:
-              payload.establishDate || payload.form?.establishDate || "",
-            phoneNumber: payload.phoneNumber || payload.form?.phoneNumber || "",
-            email: payload.email || payload.form?.email || "",
+              payload?.establishDate || payload?.form?.establishDate || "",
+            phoneNumber: payload?.phoneNumber || payload?.form?.phoneNumber || storedUser.phoneNumber || storedUser.phone || "",
+            email: payload?.email || payload?.form?.email || storedUser.email || "",
             panCard: payload.panCard || payload.form?.panCard || "",
             gstNumber: payload.gstNumber || payload.form?.gstNumber || "",
           },
@@ -391,14 +396,14 @@ export default function ProfileVerificationLanding() {
 
   return (
     <div className=" min-h-screen bg-slate-50 text-slate-800 antialiased">
-      {hasProfile && !isLoading && (
-        <div className=" max-w-[1800px] mx-auto px-4 md:px-8 lg:px-12 flex justify-end ">
+      {!isLoading && (
+        <div className=" max-w-[1800px] mx-auto px-4 md:px-8 lg:px-12 flex justify-end mb-4">
           <button
             type="button"
             onClick={handleEdit}
             className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#10b981] hover:bg-[#0ea271] text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
           >
-            Edit
+            Edit Profile
           </button>
         </div>
       )}
@@ -426,25 +431,6 @@ export default function ProfileVerificationLanding() {
                   </div>
                   <div className="h-40 rounded-2xl bg-slate-200" />
                 </div>
-              </div>
-            </div>
-          ) : !hasProfile ? (
-            <div className="space-y-6">
-              <div className="rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-100 p-10 text-center">
-                <p className="text-lg font-semibold text-slate-900">
-                  Add your institute profile to get started.
-                </p>
-                <p className="mt-3 text-slate-600">
-                  Your verification landing page will show institute details
-                  here after setup.
-                </p>
-                <button
-                  type="button"
-                  onClick={handleEdit}
-                  className="mt-6 inline-flex items-center justify-center rounded-2xl bg-[#007965] px-8 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#006252]"
-                >
-                  Add Institute
-                </button>
               </div>
             </div>
           ) : (

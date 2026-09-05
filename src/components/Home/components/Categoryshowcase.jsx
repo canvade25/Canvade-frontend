@@ -110,7 +110,7 @@ export default function CategoryShowcase({
 
     return (
         <div
-            className={`w-full max-w-[1600px] mx-auto bg-slate-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-10 grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 xl:gap-12 items-center min-h-[340px] sm:min-h-[400px] md:min-h-[440px] lg:min-h-[480px] transition-all duration-500 ease-in-out ${className}`}
+            className={`w-full mx-auto bg-slate-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-10 grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 xl:gap-12 items-center min-h-[340px] sm:min-h-[400px] md:min-h-[440px] lg:min-h-[480px] transition-all duration-500 ease-in-out ${className}`}
         >
             {/* Left Column: Image container with stable min-height and fixed aspect ratio */}
             <div className="w-full flex items-center justify-center min-h-[260px] sm:min-h-[300px] md:min-h-[360px] lg:min-h-[420px] max-h-[500px] overflow-hidden relative">

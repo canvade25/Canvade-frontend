@@ -453,11 +453,11 @@ function CourseCategoriesSection({ title, apiPath, showTopSpacer = false }) {
 
   return (
     <section className="bg-white py-10 first:pt-12 overflow-hidden">
-      <div className="mx-auto max-w-[1700px] px-4 md:px-8 lg:px-12">
+      <div className="w-full max-w-[1700px] mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-12">
         {/* {showTopSpacer && (
           <div className="mb-10 h-[360px] rounded-2xl bg-slate-100 md:h-[560px] lg:h-[760px]" />
         )} */}
-        <div className="max-w-[1400px] mx-auto">
+        <div className="w-full">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl md:text-4xl font-heading font-medium text-gray-800 tracking-tight">
             {title}
