@@ -214,8 +214,7 @@ function CourseCategoriesSection({ title, apiPath, showTopSpacer = false }) {
           })),
         );
       } catch (error) {
-
-        toast.error("Error fetching courses:", error);
+        console.error("Error fetching courses:", error);
         const anims = ["anim-left", "anim-top", "anim-bottom", "anim-right"];
         setCourses(
           FALLBACK_COURSES.map((course, index) => ({
