@@ -353,11 +353,6 @@ function InstituteRecommendationSection({
       icon: <Share2 size={16} />,
       onClick: copyInstituteLink,
     },
-    {
-      label: "Updates",
-      icon: <Bell size={16} />,
-      onClick: () => navigate("/updates"),
-    },
   ];
 
   const skeletonCards = Array.from({ length: 4 });
@@ -575,18 +570,6 @@ export function InstituteCard({ item, onCardClick, onMenuClick, onChatClick }) {
             className="flex-grow py-2 rounded-lg bg-[#E5E5E5] hover:bg-emerald-600 hover:text-white text-gray-700 text-[12px] font-semibold transition-all"
           >
             Enquiry
-          </button>
-
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              const instId = item.id;
-              navigate(instId ? `/instituteview/${instId}` : "/updates");
-            }}
-            className="flex-grow py-2 rounded-lg bg-[#E5E5E5] hover:bg-emerald-600 hover:text-white text-gray-700 text-[12px] font-semibold transition-all"
-          >
-            Updates
           </button>
 
           <button

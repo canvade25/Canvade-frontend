@@ -18,7 +18,7 @@ import InstituteRecommendation, {
   InstituteRecommendationTwo,
 } from '../components/Home/InstituteRecommendation';
 import WorkshopsRegistration from '../components/Home/WorkshopsRegistration';
-import NewsletterSection from '../components/Home/NewsletterSection';
+
 import CategoryShowcaseDemo from '../components/Home/components/Categoryshowcasedemo';
 // import Newsletter from "../components/Newsletter";
 import Footer from "../components/Footer";
@@ -69,7 +69,7 @@ export default function Home() {
         {/* <InstituteRecommendationFour /> */}
         {/* <EmptyHomeSection /> */}
         {/* <WorkshopsRegistration /> */}
-        <NewsletterSection />
+
       </main>
 
       {/* <Newsletter /> */}

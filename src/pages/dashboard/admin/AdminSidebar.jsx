@@ -61,12 +61,6 @@ const adminMenuItems = [
     icon: Calendar,
     sub: "Plan and manage your Batches",
   },
-  {
-    id: "blogs",
-    label: "Updates",
-    icon: FileText,
-    sub: "Share updates and Announcements",
-  },
 ];
 
 const AdminSidebar = ({ activeTab, setActiveTab, closeSidebar }) => {

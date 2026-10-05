@@ -46,7 +46,6 @@ const toE164 = (value) => {
 };
 
 const preferenceRows = [
-  "Course Updates",
   "WhatsApp notifications",
   // "Admission Alerts",
   // "Scholarship Alerts",

@@ -204,8 +204,6 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/notifications" element={<Notifications />} />
-            <Route path="/updates" element={<UpdatesPage />} />
-            <Route path="/updates/:updateId" element={<UpdateDetail />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout/:courseId" element={<CheckoutPage />} />
             <Route path="/compare-courses" element={<CompareCourses />} />
@@ -244,8 +242,7 @@ function App() {
                 <Route path="profile/edit" element={<ProfileVerification />} />
                 <Route path="reviews" element={<ReviewsRatings />} />
                 <Route path="batches" element={<BatchPlanner />} />
-                <Route path="blogs" element={<BlogsPress />} />
-                <Route path="blogs/create" element={<CreateUpdatePage />} />
+
                 <Route path="*" element={<Navigate to="analytics" replace />} />
               </Route>
             </Route>

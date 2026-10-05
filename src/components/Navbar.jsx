@@ -274,7 +274,6 @@ export default function Navbar() {
               <Link to="/" className={navLinkStyle("/")}>Explore</Link>
               <Link to="/categories" className={navLinkStyle("/categories")}>Categories</Link>
               <Link to="/chat" className={navLinkStyle("/chat")}>Chat</Link>
-              <Link to="/updates" className={navLinkStyle("/updates")}>Updates</Link>
 
               {isLoggedIn ? (
                 <Link
@@ -496,16 +495,6 @@ export default function Navbar() {
                   }`}
                 >
                   Chat <span className="text-gray-300 text-xl">›</span>
-                </Link>
-
-                <Link
-                  to="/updates"
-                  onClick={closeMenu}
-                  className={`flex items-center justify-between py-3.5 sm:py-4 text-[14px] sm:text-[15px] font-sans font-semibold border-b border-gray-100 transition-colors ${
-                    isActive("/updates") ? "text-emerald-600" : "text-gray-700 hover:text-emerald-600"
-                  }`}
-                >
-                  Updates <span className="text-gray-300 text-xl">›</span>
                 </Link>
 
                 {/* Dashboard Link / Accordion */}
